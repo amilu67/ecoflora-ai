@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123f37">
+  <meta name="description" content="EcoFlora AI: riconosci piante e consulta schede scientifiche sul rapporto fra vegetazione, salute umana e ambiente.">
+  <title>EcoFlora AI · Esplora il verde</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Menu principale">
+      <a class="brand" href="#explore" aria-label="EcoFlora AI, torna all'esplorazione">
+        <span class="brand-mark"><i class="fa-solid fa-seedling" aria-hidden="true"></i></span>
+        <span>EcoFlora <strong>AI</strong><small>La natura, spiegata bene.</small></span>
+      </a>
+      <p class="sidebar-label">ESPLORA</p>
+      <nav class="nav-links" aria-label="Navigazione">
+        <button class="nav-link active" data-view="explore"><i class="fa-solid fa-compass"></i> Esplora specie</button>
+        <button class="nav-link" data-view="identify"><i class="fa-solid fa-camera"></i> Riconosci una pianta</button>
+        <button class="nav-link" data-view="saved"><i class="fa-regular fa-bookmark"></i> Le mie schede <span id="saved-count" class="nav-count">0</span></button>
+        <button class="nav-link" data-view="lab"><i class="fa-solid fa-flask"></i> Laboratorio studenti</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><i class="fa-solid fa-shield-heart"></i><p><strong>Conoscenza verificabile</strong><span>Fonti visibili, niente punteggi ambientali inventati.</span></p></div>
+        <button class="nav-link" data-view="settings"><i class="fa-solid fa-gear"></i> Impostazioni API</button>
+        <small class="sidebar-credit">Prototipo · HTML + JS + IndexedDB</small>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left"><span class="eyebrow"><span class="status-dot"></span> NATURA & TECNOLOGIA</span><span class="topbar-sub">Scopri l'impatto delle specie vegetali</span></div>
+        <div class="topbar-right"><span class="connection"><i class="fa-solid fa-circle"></i> <span id="connection-label">Online</span></span><button class="icon-button" id="settings-shortcut" title="Impostazioni" aria-label="Apri impostazioni"><i class="fa-solid fa-sliders"></i></button></div>
+      </header>
+
+      <main class="main-content" id="main-content">
+        <section class="view active" id="view-explore" aria-labelledby="explore-title">
+          <div class="hero">
+            <div class="hero-copy">
+              <span class="pill pill-hero"><i class="fa-solid fa-sparkles"></i> ENCICLOPEDIA BOTANICA INTELLIGENTE</span>
+              <h1 id="explore-title">Ogni pianta racconta <em>una storia.</em></h1>
+              <p>Identifica le specie e scopri come interagiscono con la nostra salute, il clima e la biodiversità. Con dati consultabili e fonti scientifiche.</p>
+              <button class="btn btn-light" data-view="identify"><i class="fa-solid fa-camera"></i> Riconosci una pianta <i class="fa-solid fa-arrow-up-right-from-square small-icon"></i></button>
+            </div>
+            <div class="hero-art" aria-hidden="true"><div class="art-ring ring-1"></div><div class="art-ring ring-2"></div><div class="art-ring ring-3"></div><i class="fa-solid fa-leaf leaf-big"></i><i class="fa-solid fa-leaf leaf-small"></i><span class="hero-blob"><i class="fa-solid fa-magnifying-glass"></i><span>Esplora</span></span></div>
+          </div>
+          <div class="stats-row"><div class="stat"><span class="stat-icon stat-a"><i class="fa-solid fa-leaf"></i></span><p><strong id="species-count">9</strong><span>Schede approfondite</span></p></div><div class="stat"><span class="stat-icon stat-b"><i class="fa-solid fa-database"></i></span><p><strong>GBIF</strong><span>Dati tassonomici</span></p></div><div class="stat"><span class="stat-icon stat-c"><i class="fa-solid fa-heart-pulse"></i></span><p><strong>4 aree</strong><span>Di impatto analizzate</span></p></div></div>
+          <div class="section-heading"><div><span class="kicker">ESPLORAZIONE</span><h2>Il catalogo botanico</h2><p>Cerca una specie nel catalogo o nell'archivio internazionale GBIF.</p></div></div>
+          <form id="search-form" class="searchbar" role="search"><i class="fa-solid fa-magnifying-glass"></i><input id="search-input" type="search" autocomplete="off" placeholder="Es. olivo, betulla, Nerium oleander..." aria-label="Cerca una pianta"><button type="submit" class="btn btn-primary">Cerca online <i class="fa-solid fa-arrow-right"></i></button></form>
+          <div class="filter-row" role="group" aria-label="Filtra specie"><button class="filter active" data-filter="Tutte">Tutte</button><button class="filter" data-filter="Albero">Alberi</button><button class="filter" data-filter="Arbusto">Arbusti</button><button class="filter" data-filter="Erbacea">Erbacee</button></div>
+          <div id="search-status" class="inline-status" role="status" aria-live="polite"></div>
+          <div id="species-grid" class="species-grid"></div>
+          <div id="remote-wrap" class="remote-wrap" hidden><div class="section-heading compact"><div><span class="kicker">RISULTATI ONLINE</span><h2>Specie trovate su GBIF</h2><p>Classificazione internazionale; impatto ambientale da verificare.</p></div></div><div id="remote-grid" class="species-grid"></div></div>
+        </section>
+
+        <section class="view" id="view-identify" aria-labelledby="identify-title">
+          <div class="page-header"><span class="kicker">RICONOSCIMENTO CON AI</span><h1 id="identify-title">Che pianta è?</h1><p>Scatta una foto direttamente nell’app oppure scegli una foto dalla galleria. Pl@ntNet propone le specie candidate, non una diagnosi certa.</p></div>
+          <div class="identify-layout"><div class="surface upload-panel"><div class="panel-heading"><div class="icon-tile"><i class="fa-solid fa-camera-retro"></i></div><div><h2>Fotografa o carica una pianta</h2><p>Fotocamera integrata e galleria del dispositivo</p></div></div>
+            <div class="photo-actions" role="group" aria-label="Scegli come acquisire la fotografia">
+              <button id="open-camera" class="btn btn-primary" type="button"><i class="fa-solid fa-camera"></i> Apri fotocamera</button>
+              <button id="choose-photo" class="btn btn-secondary" type="button"><i class="fa-regular fa-images"></i> Carica dalla galleria</button>
+              <button id="native-camera" class="btn btn-secondary" type="button" hidden><i class="fa-solid fa-mobile-screen-button"></i> Fotocamera di sistema</button>
+            </div>
+            <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" class="sr-only" aria-label="Scegli una foto dalla galleria">
+            <input id="camera-input" type="file" accept="image/*" capture="environment" class="sr-only" aria-label="Fotografa con la fotocamera di sistema">
+            <div id="camera-panel" class="camera-panel" hidden>
+              <div class="camera-viewport"><video id="camera-video" autoplay playsinline muted aria-label="Anteprima in diretta della fotocamera"></video><div class="camera-guide" aria-hidden="true"></div></div>
+              <div class="camera-controls">
+                <button id="take-photo" class="btn btn-primary" type="button"><i class="fa-solid fa-circle-dot"></i> Scatta foto</button>
+                <button id="switch-camera" class="btn btn-secondary" type="button"><i class="fa-solid fa-rotate"></i> Cambia fotocamera</button>
+                <button id="close-camera" class="btn btn-secondary" type="button"><i class="fa-solid fa-xmark"></i> Chiudi</button>
+              </div>
+            </div>
+            <div id="camera-status" class="inline-status" role="status" aria-live="polite"></div>
+            <label id="dropzone" class="dropzone" for="photo-input"><i class="fa-solid fa-cloud-arrow-up"></i><strong>Trascina una foto qui</strong><span>oppure tocca per scegliere un'immagine già presente</span><span class="dropzone-cta">Seleziona immagine</span><img id="photo-preview" alt="Fotografia selezionata" hidden></label>
+            <div class="file-hint" id="photo-filename">Nessuna immagine selezionata</div>
+            <p class="camera-footnote"><i class="fa-solid fa-lock"></i> Per l'anteprima live serve HTTPS o localhost e il permesso della fotocamera. La foto viene inviata a Pl@ntNet solo quando premi «Analizza».</p>
+            <button id="identify-button" class="btn btn-primary wide" disabled><i class="fa-solid fa-wand-magic-sparkles"></i> Analizza con intelligenza artificiale</button><div id="identify-status" class="inline-status" role="status" aria-live="polite"></div><div id="identify-results" class="results-list"></div></div>
+          <div class="info-column"><div class="surface info-panel"><span class="circle-icon"><i class="fa-solid fa-circle-info"></i></span><h3>Come ottenere risultati migliori</h3><ul><li>Fotografa una sola pianta, ben illuminata.</li><li>Metti a fuoco foglie, fiori o frutti.</li><li>Confronta le specie suggerite prima di scegliere.</li><li>Non usare il riconoscimento per decidere se una pianta sia commestibile.</li></ul></div><div class="surface api-panel"><i class="fa-solid fa-key"></i><div><h3>Inserisci la tua chiave Pl@ntNet</h3><p>La versione GitHub non contiene alcuna chiave API. Apri Impostazioni, crea o inserisci la tua chiave personale e autorizza il dominio (CORS) nel tuo account.</p><button class="link-button" data-view="settings">Gestisci la chiave <i class="fa-solid fa-arrow-right"></i></button></div></div></div></div>
+        </section>
+
+        <section class="view" id="view-saved" aria-labelledby="saved-title"><div class="page-header"><span class="kicker">IL TUO ARCHIVIO</span><h1 id="saved-title">Le mie schede</h1><p>Specie preferite e riconoscimenti salvati nel browser con IndexedDB. Nessun account necessario.</p></div><div class="section-heading compact"><div><h2>Specie salvate</h2></div></div><div id="saved-grid" class="species-grid"></div><div class="section-heading compact history-head"><div><h2>Cronologia riconoscimenti</h2></div><button id="clear-history" class="btn btn-secondary btn-small"><i class="fa-solid fa-trash"></i> Svuota cronologia</button></div><div id="history-list" class="history-list"></div></section>
+
+        <section class="view" id="view-settings" aria-labelledby="settings-title"><div class="page-header"><span class="kicker">CONNESSIONI</span><h1 id="settings-title">Impostazioni API</h1><p>Le ricerche GBIF e Wikipedia non richiedono credenziali. Per usare Pl@ntNet, ogni studente deve inserire la propria chiave API personale, salvata solo nel suo browser.</p></div><div class="settings-layout"><div class="surface settings-card"><div class="panel-heading"><div class="icon-tile"><i class="fa-solid fa-key"></i></div><div><h2>Riconoscimento Pl@ntNet</h2><p>Fino a 500 identificazioni/giorno nel piano gratuito, secondo le condizioni del fornitore.</p></div></div><label class="field-label" for="api-key">La tua chiave API Pl@ntNet</label><div class="key-field"><input type="password" id="api-key" spellcheck="false" autocomplete="off" placeholder="Inserisci la chiave personale"><button id="toggle-key" class="icon-button" type="button" title="Mostra/nascondi"><i class="fa-solid fa-eye"></i></button></div><p class="field-foot">Nessuna chiave è inclusa nei file pubblicati su GitHub. Quella che inserisci viene salvata nell’IndexedDB di questo browser, non nel repository, e può essere rimossa. Ricorda che una chiave usata dal browser non è segreta rispetto al dispositivo o alle sue richieste di rete.</p><div class="settings-actions"><button id="save-key" class="btn btn-primary"><i class="fa-solid fa-check"></i> Salva chiave locale</button><button id="reset-key" class="btn btn-secondary" type="button"><i class="fa-solid fa-trash-can"></i> Rimuovi chiave salvata</button><button id="test-api" class="btn btn-secondary" type="button"><i class="fa-solid fa-plug"></i> Verifica connessione</button></div><div id="settings-status" class="inline-status" role="status"></div><div class="notice"><i class="fa-solid fa-triangle-exclamation"></i><div><strong>Autorizza il dominio per CORS</strong><p>Nel portale Pl@ntNet abilita le chiamate dal browser e autorizza il dominio del sito, includendo protocollo e porta in fase di sviluppo.</p></div></div><a class="text-link" href="https://my.plantnet.org/" target="_blank" rel="noopener noreferrer">Crea o gestisci la chiave su Pl@ntNet <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div><div class="surface sources-card"><h3><i class="fa-solid fa-globe"></i> Servizi collegati</h3><div class="source-entry"><span class="source-icon"><i class="fa-solid fa-seedling"></i></span><div><strong>Pl@ntNet</strong><span>Identificazione fotografica · chiave richiesta</span></div></div><div class="source-entry"><span class="source-icon"><i class="fa-solid fa-dna"></i></span><div><strong>GBIF</strong><span>Tassonomia e nomi scientifici · API aperta</span></div></div><div class="source-entry"><span class="source-icon"><i class="fa-brands fa-wikipedia-w"></i></span><div><strong>Wikipedia / MediaWiki</strong><span>Descrizioni e immagini · API aperta</span></div></div><div class="source-entry"><span class="source-icon"><i class="fa-solid fa-hard-drive"></i></span><div><strong>IndexedDB</strong><span>Archivio locale nel browser</span></div></div><p class="field-foot">Le API aggiornano i dati botanici, ma non generano automaticamente valutazioni sanitarie o ecologiche affidabili: queste richiedono fonti specialistiche.</p></div></div></section>
+        <section class="view" id="view-lab" aria-labelledby="lab-title">
+          <div class="page-header"><span class="kicker">DIDATTICA APERTA</span><h1 id="lab-title">Laboratorio degli studenti</h1><p>Arricchisci le schede con osservazioni basate su fonti, modifica i contenuti in IndexedDB ed esporta il lavoro della classe. Le schede create qui sono <strong>contributi da verificare</strong>, non valutazioni scientifiche approvate.</p></div>
+          <div class="lab-layout">
+            <form class="surface lab-form" id="contribution-form">
+              <div class="panel-heading"><div class="icon-tile"><i class="fa-solid fa-pen-ruler"></i></div><div><h2>Crea o modifica una scheda</h2><p>I dati rimangono salvati in questo browser.</p></div></div>
+              <label class="field-label" for="lab-scientific">Nome scientifico (genere e specie)</label><input id="lab-scientific" class="lab-input" placeholder="Es. Urtica dioica" required maxlength="140" list="known-species"><datalist id="known-species"></datalist>
+              <button id="load-contribution" type="button" class="btn btn-secondary btn-small">Carica la scheda nel modulo</button>
+              <div class="lab-pair"><div><label class="field-label" for="lab-common">Nome comune</label><input id="lab-common" class="lab-input" maxlength="100" placeholder="Nome italiano"></div><div><label class="field-label" for="lab-family">Famiglia botanica</label><input id="lab-family" class="lab-input" maxlength="120" placeholder="Es. Urticaceae"></div></div>
+              <label class="field-label" for="lab-kind">Tipologia</label><select id="lab-kind" class="lab-input"><option>Specie</option><option>Albero</option><option>Arbusto</option><option>Erbacea</option></select>
+              <label class="field-label" for="lab-health">Salute umana · rischi e precauzioni</label><textarea id="lab-health" class="lab-input lab-textarea" rows="3" maxlength="1600" placeholder="Descrivi soltanto effetti documentati, evitando diagnosi o rassicurazioni senza fonte."></textarea>
+              <label class="field-label" for="lab-air">Qualità dell’aria</label><textarea id="lab-air" class="lab-input lab-textarea" rows="3" maxlength="1600" placeholder="Nessun valore inventato: indica ciò che la fonte effettivamente dimostra."></textarea>
+              <label class="field-label" for="lab-climate">Clima, ombra e carbonio</label><textarea id="lab-climate" class="lab-input lab-textarea" rows="3" maxlength="1600" placeholder="Distingui effetti generali da misure locali."></textarea>
+              <label class="field-label" for="lab-biodiversity">Biodiversità e invasività</label><textarea id="lab-biodiversity" class="lab-input lab-textarea" rows="3" maxlength="1600" placeholder="Cita l'habitat e la località se importanti."></textarea>
+              <div class="lab-source-grid"><div><label class="field-label" for="lab-source-health">Fonte salute (HTTPS)</label><input id="lab-source-health" class="lab-input" type="url" placeholder="https://..." maxlength="500"></div><div><label class="field-label" for="lab-source-air">Fonte aria (HTTPS)</label><input id="lab-source-air" class="lab-input" type="url" placeholder="https://..." maxlength="500"></div><div><label class="field-label" for="lab-source-climate">Fonte clima (HTTPS)</label><input id="lab-source-climate" class="lab-input" type="url" placeholder="https://..." maxlength="500"></div><div><label class="field-label" for="lab-source-biodiversity">Fonte biodiversità (HTTPS)</label><input id="lab-source-biodiversity" class="lab-input" type="url" placeholder="https://..." maxlength="500"></div></div>
+              <label class="field-label" for="lab-notes">Note didattiche / cosa verificare</label><textarea id="lab-notes" class="lab-input lab-textarea" rows="2" maxlength="700" placeholder="Domande aperte e limiti delle fonti..."></textarea>
+              <div class="settings-actions"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Salva contributo</button><button id="delete-contribution" type="button" class="btn btn-secondary"><i class="fa-solid fa-trash"></i> Elimina modifica</button></div>
+              <div id="lab-status" class="inline-status" role="status" aria-live="polite"></div>
+            </form>
+            <div class="lab-side">
+              <div class="surface"><h3><i class="fa-solid fa-graduation-cap"></i> Progetto collaborativo</h3><p class="lab-help">1. Cerca una specie o carica una scheda esistente.<br>2. Inserisci informazioni qualitativamente verificabili.<br>3. Aggiungi almeno una fonte affidabile.<br>4. Salva ed esporta un file JSON per condividere i contributi con la classe.</p><p class="field-foot">L'insegnante dovrà controllare i contributi prima di considerarli validati. Nessun contenuto degli studenti viene caricato su un server EcoFlora.</p></div>
+              <div class="surface"><h3><i class="fa-solid fa-file-export"></i> Scambia l'archivio</h3><p class="lab-help">Esporta contributi, preferiti e cronologia; importa un archivio proveniente da un compagno. La chiave API <strong>non viene inclusa</strong> nei file esportati.</p><div class="lab-stack"><button id="export-json" class="btn btn-primary" type="button"><i class="fa-solid fa-download"></i> Esporta dati JSON</button><label for="import-file" class="btn btn-secondary import-label"><i class="fa-solid fa-file-import"></i> Importa dati JSON</label><input type="file" id="import-file" accept="application/json,.json" hidden></div><div id="import-status" class="inline-status" role="status" aria-live="polite"></div></div>
+              <div class="surface"><h3><i class="fa-solid fa-book-open"></i> Documentazione inclusa</h3><p class="lab-help">Apri i file della cartella <code>docs/</code> per le istruzioni, la struttura del codice, gli esercizi e i test.</p><a class="text-link" target="_blank" href="docs/guida-studenti.md">Guida per studenti <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">EcoFlora AI · Prototipo sperimentale <span>Le informazioni non sostituiscono pareri medici o perizie ambientali.</span></footer>
+    </div>
+  </div>
+  <dialog id="species-dialog" class="species-dialog" aria-label="Scheda botanica"><div id="species-detail"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
